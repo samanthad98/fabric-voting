@@ -7,6 +7,7 @@ import fabric.util.Iterator;
 import fabric.util.TreeMap;
 import fabric.util.Map;
 import fabric.common.Logging;
+import java.util.logging.Logger;
 import java.util.logging.Level;
 import fabric.worker.remote.RemoteWorker;
 import fabric.worker.Worker;
@@ -23,6 +24,8 @@ import java.util.concurrent.ExecutorService;
  * each associated with a voting district.
  */
 public class Vote {
+
+  private static final Logger VOTE_LOGGER = Logger.getLogger("vote");
 
   private static class VoteDistribution {
     private final double startBias;
@@ -98,11 +101,11 @@ public class Vote {
       atomic {
         final String candidate = opts.distribution.nextVote();
         final long voteStartTime = System.currentTimeMillis();
-        Logging.log(Logging.METRICS_LOGGER, Level.INFO, "STARTED VOTE FOR {0}", new java.lang.Object native[] { candidate });
+        Logging.log(VOTE_LOGGER, Level.INFO, "STARTED VOTE FOR {0}", new java.lang.Object native[] { candidate });
         r = ((Runnable) (new Runnable() {
           public void run() {
             opts.district.vote(candidate);
-            Logging.log(Logging.METRICS_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms", new java.lang.Object native[] { candidate, new Long(System.currentTimeMillis() - voteStartTime).toString() });
+            Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms", new java.lang.Object native[] { candidate, new Long(System.currentTimeMillis() - voteStartTime).toString() });
           }
         }).fabric$lang$Object$());
       }
