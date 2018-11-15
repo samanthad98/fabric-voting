@@ -8,11 +8,12 @@ import traceback
 import pexpect
 
 # district_num = int(sys.argv[1])
-district_num = 1
+district_num = 5
 # worker_num = int(sys.argv[2])
-worker_num = 1
+worker_num = 5
+tally_num = 2
 # max_threads = sys.argv[3]
-max_threads = '5'
+max_threads = '0'
 # avg_vote_interval = sys.argv[4]
 avg_vote_interval = '100'
 # start_bias = sys.argv[5]
@@ -26,7 +27,7 @@ shift_end_delay = '0'
 # avg_tally_interval = sys.argv[9]
 avg_tally_interval = '100'
 # running_time = int(sys.argv[10])
-running_time = 500
+running_time = 150
 
 # # Start the election store terminal
 # elec_term = subprocess.Popen(['/bin/bash'], stdin = subprocess.PIPE, stdout=subprocess.PIPE)
@@ -96,12 +97,14 @@ for i in range(worker_num):
 print('Done setting up worker')
 
 for i in range(district_num):
-    district_term[i] = pexpect.sendline('voting.main.Vote election 1 5 100 0.6 0.6 0 0')
-for i in range(worker_num - 1):
-    worker_term[i].sendline('voting.main.Vote election 1 5 100 0.6 0.6 0 0')
-worker_term[-1].sendline('voting.main.Tally election 100')
+    district_term[i].sendline('voting.main.Vote election ' + str(i+1) + ' 0 100 0.6 0.6 0 0')
+for i in range(worker_num):
+    if i < worker_num - tally_num:
+        worker_term[i].sendline('voting.main.Vote election ' + str((i+1)/2 + 1) + ' 0 100 0.6 0.6 0 0')
+    else:
+        worker_term[i].sendline('voting.main.Tally election 100')
 print('line sent!')
-time.sleep(200)
+time.sleep(running_time)
 
 # worker_term = [None] * worker_num
 # for i in range(worker_num)
