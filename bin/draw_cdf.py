@@ -4,7 +4,7 @@ import csv
 DATA_PATH = sys.argv[1]
 
 # import data from file
-reader = csv.reader.(open(DATA_PATH, 'r'), delimiter=',')
+reader = csv.reader(open(DATA_PATH, 'r'), delimiter=' ')
 data = np.array(list(reader)).astype('float')
 
 # Draw the histogram of backofftime
