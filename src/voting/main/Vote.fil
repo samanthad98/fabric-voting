@@ -19,6 +19,9 @@ import voting.util.Election;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
+import java.io.StringWriter;
+import java.io.PrintWriter;
+
 /**
  * The main class for adding votes to the system, to be run on a set of workers,
  * each associated with a voting district.
@@ -95,25 +98,33 @@ public class Vote {
     int b = 0;
     int b_copy = 0;
     while (true) {
-      long startTime = System.currentTimeMillis();
+      try {
+        long startTime = System.currentTimeMillis();
 
-      Runnable r = null;
-      atomic {
-        final String candidate = opts.distribution.nextVote();
-        final long voteStartTime = System.currentTimeMillis();
-        Logging.log(VOTE_LOGGER, Level.INFO, "STARTED VOTE FOR {0} AT {1}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime)});
-        r = ((Runnable) (new Runnable() {
-          public void run() {
-            opts.district.vote(candidate);
-            final long voteEndTime = System.currentTimeMillis();
-            Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms AT {2}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime - voteEndTime) , Long.toString(voteEndTime)});
-          }
-        }).fabric$lang$Object$());
+        Runnable r = null;
+        atomic {
+          final String candidate = opts.distribution.nextVote();
+          final long voteStartTime = System.currentTimeMillis();
+          Logging.log(VOTE_LOGGER, Level.INFO, "STARTED VOTE FOR {0} AT {1}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime)});
+          r = ((Runnable) (new Runnable() {
+            public void run() {
+              opts.district.vote(candidate);
+              final long voteEndTime = System.currentTimeMillis();
+              Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms AT {2}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime - voteEndTime) , Long.toString(voteEndTime)});
+            }
+          }).fabric$lang$Object$());
+        }
+        service.submit(r);
+
+        // Wait until the next vote event.
+        Util.expSleep(rand, opts.avgVoteInterval - (System.currentTimeMillis() - startTime));
+      } catch (Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        Logging.log(VOTE_LOGGER, Level.WARNING, sw.toString(), new Object());
+        break;
       }
-      service.submit(r);
-
-      // Wait until the next vote event.
-      Util.expSleep(rand, opts.avgVoteInterval - (System.currentTimeMillis() - startTime));
     }
   }
 

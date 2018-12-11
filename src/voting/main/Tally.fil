@@ -10,6 +10,9 @@ import voting.util.Election;
 import fabric.worker.Store;
 import fabric.worker.Worker;
 
+import java.io.StringWriter;
+import java.io.PrintWriter;
+
 /**
  * The main class for tallying votes in the system, to be run on a worker
  * designated for tallying.
@@ -39,14 +42,22 @@ public class Tally {
     // Use the first district's store.
     Store store = Worker.getWorker().getStore("district1");
     while (true) {
-      long startTime = System.currentTimeMillis();
-      Logging.log(TALLY_LOGGER, Level.INFO, "STARTED QUERY FOR WINNER AT {0}ms", Long.toString(startTime));
-      String winner = opts.election.winner(store, "a", "b");
-      long endTime = System.currentTimeMillis();
-      Logging.log(TALLY_LOGGER, Level.INFO, "FINISHED QUERY FOR WINNER({0}) IN {1}ms AT {2}ms", new java.lang.Object native[] { winner, Long.toString(startTime - endTime), Long.toString(endTime) });
-      //System.out.println("Winner is " + winner);
+      try {
+        long startTime = System.currentTimeMillis();
+        Logging.log(TALLY_LOGGER, Level.INFO, "STARTED QUERY FOR WINNER AT {0}ms", Long.toString(startTime));
+        String winner = opts.election.winner(store, "a", "b");
+        long endTime = System.currentTimeMillis();
+        Logging.log(TALLY_LOGGER, Level.INFO, "FINISHED QUERY FOR WINNER({0}) IN {1}ms AT {2}ms", new java.lang.Object native[] { winner, Long.toString(startTime - endTime), Long.toString(endTime) });
+        //System.out.println("Winner is " + winner);
 
-      Util.expSleep(rand, opts.avgTallyInterval - (System.currentTimeMillis() - startTime));
+        Util.expSleep(rand, opts.avgTallyInterval - (System.currentTimeMillis() - startTime));
+      } catch (Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        Logging.log(TALLY_LOGGER, Level.WARNING, sw.toString(), new Object());
+        break;
+      }
     }
   }
 
