@@ -47,7 +47,7 @@ public class Tally {
         Logging.log(TALLY_LOGGER, Level.INFO, "STARTED QUERY FOR WINNER AT {0}ms", Long.toString(startTime));
         String winner = opts.election.winner(store, "a", "b");
         long endTime = System.currentTimeMillis();
-        Logging.log(TALLY_LOGGER, Level.INFO, "FINISHED QUERY FOR WINNER({0}) IN {1}ms AT {2}ms", new java.lang.Object native[] { winner, Long.toString(startTime - endTime), Long.toString(endTime) });
+        Logging.log(TALLY_LOGGER, Level.INFO, "FINISHED QUERY FOR WINNER({0}) IN {1}ms AT {2}ms", new java.lang.Object native[] { winner, Long.toString(endTime - startTime), Long.toString(endTime) });
         //System.out.println("Winner is " + winner);
 
         Util.expSleep(rand, opts.avgTallyInterval - (System.currentTimeMillis() - startTime));

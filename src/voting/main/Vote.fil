@@ -110,7 +110,7 @@ public class Vote {
             public void run() {
               opts.district.vote(candidate);
               final long voteEndTime = System.currentTimeMillis();
-              Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms AT {2}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime - voteEndTime) , Long.toString(voteEndTime)});
+              Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms AT {2}ms", new java.lang.Object native[] { candidate, Long.toString(voteEndTime - voteStartTime) , Long.toString(voteEndTime)});
             }
           }).fabric$lang$Object$());
         }

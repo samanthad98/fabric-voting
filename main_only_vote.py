@@ -50,9 +50,9 @@ for i in range(worker_num):
 print('Done setting up worker')
 
 for i in range(district_num):
-    district_term[i].sendline('voting.main.Vote election ' + str(i+1) + ' 0 5 0.6 0.6 0 0')
+    district_term[i].sendline('voting.main.Vote election ' + str(i+1) + ' 0 3 0.6 0.6 0 0')
 for i in range(worker_num):
-    worker_term[i].sendline('voting.main.Vote election ' + str(i/3+1)  + ' 0 5 0.6 0.6 0 0')
+    worker_term[i].sendline('voting.main.Vote election ' + str(i/3+1)  + ' 0 3 0.6 0.6 0 0')
 print('line sent!')
 time.sleep(running_time)
 
