@@ -40,9 +40,10 @@ public class Tally {
     Store store = Worker.getWorker().getStore("district1");
     while (true) {
       long startTime = System.currentTimeMillis();
-      Logging.log(TALLY_LOGGER, Level.INFO, "STARTED QUERY FOR WINNER AT {0}ms", new Long(System.currentTimeMillis()).toString());
+      Logging.log(TALLY_LOGGER, Level.INFO, "STARTED QUERY FOR WINNER AT {0}ms", Long.toString(startTime));
       String winner = opts.election.winner(store, "a", "b");
-      Logging.log(TALLY_LOGGER, Level.INFO, "FINISHED QUERY FOR WINNER({0}) AT {1}ms", new java.lang.Object native[] { winner, new Long(System.currentTimeMillis()).toString() });
+      long endTime = System.currentTimeMillis();
+      Logging.log(TALLY_LOGGER, Level.INFO, "FINISHED QUERY FOR WINNER({0}) IN {1}ms AT {2}ms", new java.lang.Object native[] { winner, Long.toString(startTime - endTime), Long.toString(endTime) });
       //System.out.println("Winner is " + winner);
 
       Util.expSleep(rand, opts.avgTallyInterval - (System.currentTimeMillis() - startTime));

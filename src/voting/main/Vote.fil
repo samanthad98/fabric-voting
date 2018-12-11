@@ -101,11 +101,12 @@ public class Vote {
       atomic {
         final String candidate = opts.distribution.nextVote();
         final long voteStartTime = System.currentTimeMillis();
-        Logging.log(VOTE_LOGGER, Level.INFO, "STARTED VOTE FOR {0} AT {1}ms", new java.lang.Object native[] { candidate, new Long(System.currentTimeMillis()).toString()});
+        Logging.log(VOTE_LOGGER, Level.INFO, "STARTED VOTE FOR {0} AT {1}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime)});
         r = ((Runnable) (new Runnable() {
           public void run() {
             opts.district.vote(candidate);
-            Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms", new java.lang.Object native[] { candidate, new Long(System.currentTimeMillis()).toString() });
+            final long voteEndTime = System.currentTimeMillis();
+            Logging.log(VOTE_LOGGER, Level.INFO, "FINISHED VOTE FOR {0} IN {1}ms AT {2}ms", new java.lang.Object native[] { candidate, Long.toString(voteStartTime - voteEndTime) , Long.toString(voteEndTime)});
           }
         }).fabric$lang$Object$());
       }
